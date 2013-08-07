@@ -3,6 +3,11 @@
 ;; http://www.opensource.org/licenses/mit-license.php
 
 (ns guns.cli.optparse
+  "OptionParser for Clojure. Works like clojure.tools.cli, but supports GNU
+   option parsing conventions.
+
+   See test/example.clj for example program with global options, subcommands,
+   and subcommand options handling."
   (:refer-clojure :exclude [assert])
   (:require [clojure.string :as string]))
 
