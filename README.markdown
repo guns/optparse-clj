@@ -157,6 +157,7 @@ Goodbye!
 
 ## LICENSE
 
+```
 The MIT License (MIT)
 
 Copyright (c) 2013 Sung Pae <self@sungpae.com>
@@ -178,6 +179,7 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
 
 [clojure.tools.cli]: https://github.com/clojure/tools.cli
 [test/example.clj]: test/example.clj
