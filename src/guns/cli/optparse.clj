@@ -1,4 +1,5 @@
 (ns guns.cli.optparse
+  (:refer-clojure :exclude [assert])
   (:require [clojure.string :as string]))
 
 (defn tokenize-arguments
@@ -79,6 +80,13 @@
               s))
           #{} specs))
 
+(defn- assert
+  "Custom assert function. Throws AssertionErrors."
+  ([x opt msg]
+   (when-not x
+     (throw (new AssertionError
+                 (format "Failed to parse `%s`: %s" opt msg))))))
+
 (defn process-option-tokens
   "Reduce sequence of [opt-type opt optarg] tuples into a map of options
    merged over the default values according to option specifications.
@@ -91,20 +99,19 @@
     (reduce (fn [m [otype opt arg]]
               (let [spec (first (filter #(= opt (otype %)) specs))
                     {:keys [kw required parse-fn assert-fn assert-msg]} spec
-                    assert-msg (or assert-msg "Invalid option argument: `%s`")
-                    _ (do (assert spec (str "Invalid option: " (pr-str opt)))
+                    assert-msg (or assert-msg "Invalid option argument: %s")
+                    _ (do (assert spec opt "Invalid option")
                           (when required
-                            (assert arg (format "Option %s missing required argument %s"
-                                                (pr-str opt)
-                                                (pr-str required)))))
+                            (assert arg opt (format "Missing required argument %s"
+                                                    (pr-str required)))))
                     value (let [v (if required arg true)]
                             (if parse-fn
                               (try (parse-fn v)
                                    (catch Throwable _
-                                     (assert false (format assert-msg v))))
+                                     (assert false opt (format assert-msg (pr-str v)))))
                               v))]
                 (when assert-fn
-                  (assert (assert-fn value) (format assert-msg value)))
+                  (assert (assert-fn value) opt (format assert-msg (pr-str value))))
                 (assoc m kw value)))
             defaults opt-tokens)))
 
