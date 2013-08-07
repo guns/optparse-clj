@@ -23,10 +23,10 @@
    Long options with `=` are always parsed as option + optarg, even if nothing
    follows the `=` sign.
 
-   If :trailing-options is false, the first non-option, non-optarg argument
+   If the :in-order flag is true, the first non-option, non-optarg argument
    stops options processing. This is useful for handling subcommand options."
   [required argv & opts]
-  (let [{:keys [trailing-options] :or {trailing-options true}} opts]
+  (let [{:keys [in-order]} opts]
     (loop [opts [] args [] [car & cdr] argv]
       (if car
         (condp re-seq car
@@ -55,9 +55,9 @@
                                                [(conj os [:short-opt o]) tail])))
                                          [[] cdr] characters)]
                     (recur (into opts os) args cdr))
-          (if trailing-options
-            (recur opts (conj args car) cdr)
-            (recur opts (into args (cons car cdr)) [])))
+          (if in-order
+            (recur opts (into args (cons car cdr)) [])
+            (recur opts (conj args car) cdr)))
         [opts args]))))
 
 (defn compile-option-specs
@@ -156,7 +156,7 @@
      https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
    Trailing options are supported by default, and can be turned off by
-   supplying :trailing-options false.
+   supplying the :in-order option.
 
    Short options are optional, but long options are required and map to
    keywordized keys in the resulting options map.
@@ -173,31 +173,31 @@
 
    Example:
 
-     (parse [\"command\" \"-dp4000\" \"--host=example.com\"]
-            [[\"-p\" \"--port NUMBER\" \"Listen on this port\"
-              :default 8080
-              :parse-fn #(Integer/parseInt %)
-              :assert [#(< 0 % 0x10000) \"%s is not a valid port number\"]]
-             [nil \"--host HOST\" \"Bind to this hostname\"
-              :default \"localhost\"]
-             [\"-d\" \"--detach\" \"Detach and run in the background\"]
-             [\"-h\" \"--help\"]])
+     (def options
+       [[\"-p\" \"--port NUMBER\" \"Listen on this port\"
+         :default 8080
+         :parse-fn #(Integer/parseInt %)
+         :assert [#(< 0 % 0x10000) \"%s is not a valid port number\"]]
+        [nil \"--host HOST\" \"Bind to this hostname\"
+         :default \"localhost\"]
+        [\"-d\" \"--detach\" \"Detach and run in the background\"]
+        [\"-h\" \"--help\"]])
+
+     (parse [\"command\" \"-dp4000\" \"--host=example.com\"] options)
 
    Returns:
 
      [{:help nil, :detach true, :host \"example.com\", :port 4000}
       [\"command\"]
       \"  -p, --port NUMBER  8080       Listen on this port
-              --host HOST    localhost  Bind to this hostname
-          -d, --detach                  Detach and run in the background
-          -h, --help\"]"
+             --host HOST    localhost  Bind to this hostname
+         -d, --detach                  Detach and run in the background
+         -h, --help\"]"
   [argv [& options] & opts]
   (let [specs (compile-option-specs options)
         req (required-arguments specs)
-        {:keys [trailing-options] :or {trailing-options true}} opts
-        [opt-tokens rest-args] (tokenize-arguments
-                                 req argv
-                                 :trailing-options trailing-options)]
+        {:keys [in-order]} opts
+        [opt-tokens rest-args] (tokenize-arguments req argv :in-order in-order)]
     [(process-option-tokens specs opt-tokens)
      rest-args
      (summarize specs)]))

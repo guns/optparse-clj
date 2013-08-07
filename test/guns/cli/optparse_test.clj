@@ -15,7 +15,7 @@
            [[[:short-opt "-a"]] ["-b"]]))
     (is (= (o/tokenize-arguments required ["-a" "foo" "-b"])
            [[[:short-opt "-a"] [:short-opt "-b"]] ["foo"]]))
-    (is (= (o/tokenize-arguments required ["-a" "foo" "-b"] :trailing-options false)
+    (is (= (o/tokenize-arguments required ["-a" "foo" "-b"] :in-order true)
            [[[:short-opt "-a"]] ["foo" "-b"]]))))
 
 (deftest test-compile-opt-specs

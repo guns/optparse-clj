@@ -65,7 +65,7 @@
 
 (defn -main [& argv]
   (try
-    (let [[opts args summary] (parse argv global-options :trailing-options false)]
+    (let [[opts args summary] (parse argv global-options :in-order true)]
       ;; Early exit conditions
       (cond (:help opts) (exit 0 (format global-usage summary))
             (:version opts) (exit 0 version))
