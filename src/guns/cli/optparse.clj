@@ -198,4 +198,6 @@
         [opt-tokens rest-args] (tokenize-arguments
                                  req argv
                                  :trailing-options trailing-options)]
-    [(process-option-tokens specs opt-tokens) rest-args (summarize specs)]))
+    [(process-option-tokens specs opt-tokens)
+     rest-args
+     (summarize specs)]))
