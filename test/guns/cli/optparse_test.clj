@@ -35,7 +35,7 @@
              :parse-fn pfn
              :assert-fn vfn
              :assert-msg "%s is not a valid port number"}]))
-    (is (= (o/compile-option-specs [[nil "--minimal" nil]])
+    (is (= (o/compile-option-specs [[nil "--minimal"]])
            [{:kw :minimal
              :short-opt nil
              :long-opt "--minimal"
@@ -123,7 +123,7 @@
                         :parse-fn nil
                         :assert-fn nil
                         :assert-msg nil}
-                       {:kw :protocol
+                       {:kw :verbose
                         :short-opt "-v"
                         :long-opt "--verbose"
                         :required nil
@@ -137,7 +137,17 @@
            ["Options:"
             "  -p, --port NUMBER    80         Listen on this port"
             "      --host HOSTNAME  localhost  Hostname to bind to"
-            "  -v, --verbose                   Be verbose"]))))
+            "  -v, --verbose                   Be verbose"])))
+  (is (= (o/summarize [{:kw :minimal
+                        :short-opt nil
+                        :long-opt "--minimal"
+                        :required nil
+                        :desc nil
+                        :default nil
+                        :parse-fn nil
+                        :assert-fn nil
+                        :assert-msg nil}])
+         "Options:\n      --minimal")))
 
 (deftest test-parse
   (is (= (o/parse ["-p443" "--host=example.com" "--log-level" "2" "--protocol" "udp"

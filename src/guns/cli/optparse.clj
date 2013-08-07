@@ -119,14 +119,14 @@
                             s (str s long-opt)]
                         (if required (str s \space required) s))
                       (if (and required default)
-                        (str " " (if (keyword? default) (name default) default))
+                        (if (keyword? default) (name default) (str default))
                         "")
                       (or desc "")])
                    specs)
-        [optlen vlen] (reduce (fn [[olen vlen] [o v _]]
-                                [(max olen (count o)) (max vlen (count v))])
-                              [0 0] parts)
-        fmt (str "%-" optlen "s %-" vlen "s  %s")
+        [optlen vallen] (reduce (fn [[olen vlen] [o v _]]
+                                  [(max olen (count o)) (max vlen (count v))])
+                                [0 0] parts)
+        fmt (str "%-" (inc optlen) "s %-" (inc vallen) "s %s")
         lines (reduce (fn [ls ps]
                         (conj ls (string/trimr (apply format fmt ps))))
                       ["Options:"] parts)]
