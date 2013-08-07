@@ -1,4 +1,4 @@
-(defproject optparse-clj "1.0.0-SNAPSHOT"
+(defproject guns.cli/optparse "1.0.0"
   :url "https://github.com/guns/optparse-clj"
   :description "OptionParser for Clojure. Works like clojure.tools.cli, but supports GNU option parsing conventions."
   :license {:name "MIT License"
