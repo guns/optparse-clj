@@ -134,8 +134,7 @@
                         :assert-msg nil}])
          (string/join
            \newline
-           ["Options:"
-            "  -p, --port NUMBER    80         Listen on this port"
+           ["  -p, --port NUMBER    80         Listen on this port"
             "      --host HOSTNAME  localhost  Hostname to bind to"
             "  -v, --verbose                   Be verbose"])))
   (is (= (o/summarize [{:kw :minimal
@@ -147,7 +146,7 @@
                         :parse-fn nil
                         :assert-fn nil
                         :assert-msg nil}])
-         "Options:\n      --minimal")))
+         "      --minimal")))
 
 (deftest test-parse
   (is (= (o/parse ["-p443" "--host=example.com" "--log-level" "2" "--protocol" "udp"
@@ -174,8 +173,7 @@
           ["arg" "-n" "--noop" "foo" "bar"]
           (string/join
             \newline
-            ["Options:"
-             "  -p, --port NUMBER      80         Listen on this port"
+            ["  -p, --port NUMBER      80         Listen on this port"
              "      --host HOST        localhost  Bind to this hostname"
              "  -l, --log-level LEVEL  1          Logging level"
              "      --protocol PROTO   tcp"

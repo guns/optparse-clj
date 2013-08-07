@@ -127,9 +127,7 @@
                                   [(max olen (count o)) (max vlen (count v))])
                                 [0 0] parts)
         fmt (str "%-" (inc optlen) "s %-" (inc vallen) "s %s")
-        lines (reduce (fn [ls ps]
-                        (conj ls (string/trimr (apply format fmt ps))))
-                      ["Options:"] parts)]
+        lines (map #(string/trimr (apply format fmt %)) parts)]
     (string/join \newline lines)))
 
 (defn parse
