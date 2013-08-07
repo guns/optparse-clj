@@ -8,7 +8,6 @@
 
    See test/example.clj for example program with global options, subcommands,
    and subcommand options handling."
-  (:refer-clojure :exclude [assert])
   (:require [clojure.string :as string]))
 
 (defn tokenize-arguments
@@ -89,7 +88,7 @@
               s))
           #{} specs))
 
-(defn- assert
+(defn- assert-option
   "Custom assert function. Throws AssertionErrors."
   ([x opt msg]
    (when-not x
@@ -109,18 +108,20 @@
               (let [spec (first (filter #(= opt (otype %)) specs))
                     {:keys [kw required parse-fn assert-fn assert-msg]} spec
                     assert-msg (or assert-msg "Invalid option argument: %s")
-                    _ (do (assert spec opt "Invalid option")
+                    _ (do (assert-option spec opt "Invalid option")
                           (when required
-                            (assert arg opt (format "Missing required argument %s"
-                                                    (pr-str required)))))
+                            (assert-option
+                              arg opt (format "Missing required argument %s" (pr-str required)))))
                     value (let [v (if required arg true)]
                             (if parse-fn
                               (try (parse-fn v)
                                    (catch Throwable _
-                                     (assert false opt (format assert-msg (pr-str v)))))
+                                     (assert-option
+                                       false opt (format assert-msg (pr-str v)))))
                               v))]
                 (when assert-fn
-                  (assert (assert-fn value) opt (format assert-msg (pr-str value))))
+                  (assert-option
+                    (assert-fn value) opt (format assert-msg (pr-str value))))
                 (assoc m kw value)))
             defaults opt-tokens)))
 
