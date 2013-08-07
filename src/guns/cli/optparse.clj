@@ -1,3 +1,7 @@
+;; Copyright (c) 2013 Sung Pae <self@sungpae.com>
+;; Distributed under the MIT license.
+;; http://www.opensource.org/licenses/mit-license.php
+
 (ns guns.cli.optparse
   (:refer-clojure :exclude [assert])
   (:require [clojure.string :as string]))
@@ -141,26 +145,17 @@
   "Command line options parser. Works like clojure.tools.cli, with some
    features from Ruby's OptionParser.
 
-   GNU style short option clumping is supported, as well as long option
-   arguments following an equal sign. Trailing options are also supported, and
-   can be turned off by calling with :trailing-options false.
+   Standard GNU option parsing conventions are supported:
 
-   Example:
+     https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
-     (parse argv
-            [[\"-p\" \"--port NUMBER\" \"Listen on this port\"
-              :parse-fn #(Integer/parseInt %)
-              :assert [#(< 0 % 0x10000) \"%s is not a valid port number\"]]
-             [nil \"--host HOST\" \"Bind to this hostname\"
-              :default \"localhost\"]
-             [\"-v\" \"--verbose\" nil]]
-            :trailing-options false ; Defaults to true
-            )
+   Trailing options are supported by default, and can be turned off by
+   supplying :trailing-options false.
 
    Short options are optional, but long options are required and map to
    keywordized keys in the resulting options map.
 
-   If a long option is followed by a space (or =) and an example argument
+   If a long option is followed by a space (or `=`) and an example argument
    string, an option argument will be required and passed to :parse-fn. The
    resulting value is validated with :assert, throwing an AssertionError on
    failure.
@@ -168,7 +163,28 @@
    Otherwise, options are assumed to be boolean flags, defaulting to false.
    \"--[no-]option\" variations are not implicitly supported.
 
-   Returns [options-map remaining-args options-summary]"
+   Returns [options-map remaining-args options-summary]
+
+   Example:
+
+     (parse [\"command\" \"-dp4000\" \"--host=example.com\"]
+            [[\"-p\" \"--port NUMBER\" \"Listen on this port\"
+              :default 8080
+              :parse-fn #(Integer/parseInt %)
+              :assert [#(< 0 % 0x10000) \"%s is not a valid port number\"]]
+             [nil \"--host HOST\" \"Bind to this hostname\"
+              :default \"localhost\"]
+             [\"-d\" \"--detach\" \"Detach and run in the background\"]
+             [\"-h\" \"--help\"]])
+
+   Returns:
+
+     [{:help nil, :detach true, :host \"example.com\", :port 4000}
+      [\"command\"]
+      \"  -p, --port NUMBER  8080       Listen on this port
+              --host HOST    localhost  Bind to this hostname
+          -d, --detach                  Detach and run in the background
+          -h, --help\"]"
   [argv [& options] & opts]
   (let [specs (compile-option-specs options)
         req (required-arguments specs)
