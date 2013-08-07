@@ -4,7 +4,9 @@
 
 (ns guns.cli.optparse
   "OptionParser for Clojure. Works like clojure.tools.cli, but supports GNU
-   option parsing conventions.
+   option parsing conventions:
+
+   https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
    See test/example.clj for example program with global options, subcommands,
    and subcommand options handling."
@@ -92,8 +94,7 @@
   "Custom assert function. Throws AssertionErrors."
   ([x opt msg]
    (when-not x
-     (throw (new AssertionError
-                 (format "Failed to parse `%s`: %s" opt msg))))))
+     (throw (new AssertionError (format "Failed to parse `%s`: %s" opt msg))))))
 
 (defn process-option-tokens
   "Reduce sequence of [opt-type opt optarg] tuples into a map of options
