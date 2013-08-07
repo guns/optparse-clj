@@ -145,6 +145,11 @@ Detaching from terminal!
 Goodbye!
 ```
 
+## TODO
+
+- [ ] Support multiple invocations of an option:
+      `-vvv` or `--hook "touch timestamp" --hook "notify-send DONE"`
+
 ## Inspired by:
 
 * [clojure.tools.cli][]
