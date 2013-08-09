@@ -67,28 +67,36 @@
    Each option vector must supply at least two elements: [short-opt long-opt]
 
    The short-opt may be nil, but long-opt must be a String beginning with two
-   leading dashes: `--`"
+   leading dashes: `--`
+
+   The following options are available:
+
+     :fallback    Specify a fallback default value for options that do not
+                  have an explicit :default entry. nil by default; useful for
+                  distinguishing the value `nil` from `undefined`"
   [option-vectors & opts]
-  (letfn [(expand [args]
-            (if (keyword? (first args)) (cons nil args) args))
-          (assert-long-opt [opt orig]
-            (assert (and (string? opt) (re-matches #"\A--[^ =].*" opt))
-                    (str "A long option is required: " (pr-str orig))))
-          (compile [[short-opt long-opt & more :as optv]]
-            (assert-long-opt long-opt optv)
-            (let [[desc & {:keys [default parse-fn assert]}] (expand more)
-                  [assert-fn assert-msg] assert
-                  [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
-              {:kw (keyword opt)
-               :short-opt short-opt
-               :long-opt (str "--" opt)
-               :required req
-               :desc desc
-               :default default
-               :parse-fn parse-fn
-               :assert-fn assert-fn
-               :assert-msg assert-msg}))]
-    (mapv compile option-vectors)))
+  (let [[& {:keys [fallback]}] opts]
+    (letfn [(expand [args]
+              (if (keyword? (first args)) (cons nil args) args))
+            (assert-long-opt [opt orig]
+              (assert (and (string? opt) (re-matches #"\A--[^ =].*" opt))
+                      (str "A long option is required: " (pr-str orig))))
+            (compile [[short-opt long-opt & more :as optv]]
+              (assert-long-opt long-opt optv)
+              (let [[desc & {:keys [default parse-fn assert]
+                             :or {default fallback}}] (expand more)
+                    [assert-fn assert-msg] assert
+                    [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
+                {:kw (keyword opt)
+                 :short-opt short-opt
+                 :long-opt (str "--" opt)
+                 :required req
+                 :desc desc
+                 :default default
+                 :parse-fn parse-fn
+                 :assert-fn assert-fn
+                 :assert-msg assert-msg}))]
+      (mapv compile option-vectors))))
 
 (defn required-arguments
   "Extract set of short and long options that require arguments."

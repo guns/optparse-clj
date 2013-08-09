@@ -58,6 +58,12 @@
              :parse-fn nil
              :assert-fn nil
              :assert-msg nil}])))
+  (testing "fallback values"
+    (is (= (set (map :default (o/compile-option-specs
+                                [[nil "--alpha ARG"]
+                                 [nil "--beta ARG" :default \β]]
+                                :fallback ::undefined)))
+           #{::undefined \β})))
   (testing "input validation"
     (is (thrown? AssertionError (o/compile-option-specs [[]])))
     (is (thrown? AssertionError (o/compile-option-specs [[nil nil]])))
