@@ -69,22 +69,25 @@
    The short-opt may be nil, but long-opt must be a String beginning with two
    leading dashes: `--`"
   [option-vectors & opts]
-  (mapv (fn [[short-opt long-opt desc & {:keys [default parse-fn assert]} :as optv]]
-          (let [[assert-fn assert-msg] assert
-                _ (clojure.core/assert
-                    (and (string? long-opt) (re-matches #"\A--[^ =].*" long-opt))
-                    (str "A long option is required: " (pr-str optv)))
-                [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
-            {:kw (keyword opt)
-             :short-opt short-opt
-             :long-opt (str "--" opt)
-             :required req
-             :desc desc
-             :default default
-             :parse-fn parse-fn
-             :assert-fn assert-fn
-             :assert-msg assert-msg}))
-        option-vectors))
+  (letfn [(expand [args]
+            (if (keyword? (first args)) (cons nil args) args))
+          (compile [[short-opt long-opt & more :as optv]]
+            (let [[desc & {:keys [default parse-fn assert]}] (expand more)
+                  [assert-fn assert-msg] assert
+                  _ (clojure.core/assert
+                      (and (string? long-opt) (re-matches #"\A--[^ =].*" long-opt))
+                      (str "A long option is required: " (pr-str optv)))
+                  [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
+              {:kw (keyword opt)
+               :short-opt short-opt
+               :long-opt (str "--" opt)
+               :required req
+               :desc desc
+               :default default
+               :parse-fn parse-fn
+               :assert-fn assert-fn
+               :assert-msg assert-msg}))]
+    (mapv compile option-vectors)))
 
 (defn required-arguments
   "Extract set of short and long options that require arguments."

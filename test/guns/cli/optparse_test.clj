@@ -47,6 +47,17 @@
              :parse-fn nil
              :assert-fn nil
              :assert-msg nil}])))
+  (testing "description is optional"
+    (is (= (o/compile-option-specs [[nil "--foo ARG" :default "FOO"]])
+           [{:kw :foo
+             :short-opt nil
+             :long-opt "--foo"
+             :required "ARG"
+             :desc nil
+             :default "FOO"
+             :parse-fn nil
+             :assert-fn nil
+             :assert-msg nil}])))
   (testing "input validation"
     (is (thrown? AssertionError (o/compile-option-specs [[]])))
     (is (thrown? AssertionError (o/compile-option-specs [[nil nil]])))
