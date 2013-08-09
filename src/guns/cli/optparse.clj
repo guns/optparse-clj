@@ -73,7 +73,7 @@
 
      :fallback    Specify a fallback default value for options that do not
                   have an explicit :default entry. nil by default; useful for
-                  distinguishing the value `nil` from `undefined`"
+                  distinguishing the value `nil` from undefined values."
   [option-vectors & opts]
   (let [[& {:keys [fallback]}] opts]
     (letfn [(expand [args]
@@ -186,8 +186,17 @@
    resulting value is validated with :assert, throwing an AssertionError on
    failure.
 
-   Otherwise, options are assumed to be boolean flags, defaulting to false.
-   \"--[no-]option\" variations are not implicitly supported.
+   Otherwise, options are assumed to be boolean flags, defaulting to nil.
+   \"--[no-]option\" variations are currently not implicitly supported.
+
+   The following keyword options are available:
+
+     :in-order    Process arguments in order, stopping on the first non-option
+                  non-optarg argument.
+
+     :fallback    Set :default values in option vectors that do not explicitly
+                  indicate a :default value. This can be used to differentiate
+                  between undefined values and `nil`.
 
    Returns [options-map remaining-args options-summary]
 
@@ -208,15 +217,17 @@
    Returns:
 
      [{:help nil, :detach true, :host \"example.com\", :port 4000}
+
       [\"command\"]
+
       \"  -p, --port NUMBER  8080       Listen on this port
              --host HOST    localhost  Bind to this hostname
          -d, --detach                  Detach and run in the background
          -h, --help\"]"
   [argv [& options] & opts]
-  (let [specs (compile-option-specs options)
+  (let [{:keys [in-order fallback]} opts
+        specs (compile-option-specs options :fallback fallback)
         req (required-arguments specs)
-        {:keys [in-order]} opts
         [opt-tokens rest-args] (tokenize-arguments req argv :in-order in-order)]
     [(process-option-tokens specs opt-tokens)
      rest-args

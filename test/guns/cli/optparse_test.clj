@@ -202,4 +202,18 @@
              "  -l, --log-level LEVEL  1          Logging level"
              "      --protocol PROTO   tcp"
              "  -v, --verbose"
-             "  -n, --noop"])])))
+             "  -n, --noop"])]))
+  (testing ":in-order"
+    (is (= (o/parse ["-a" "α" "-b"]
+                    [["-a" "--alpha"] ["-b" "--beta"]]
+                    :in-order true)
+           [{:alpha true :beta nil}
+            ["α" "-b"]
+            "  -a, --alpha\n  -b, --beta"])))
+  (testing ":fallback"
+    (is (= (o/parse []
+                    [["-a" "--alpha ARG"] ["-b" "--beta ARG" :default \β]]
+                    :fallback ::undefined)
+           [{:alpha ::undefined :beta \β}
+            []
+            "  -a, --alpha ARG  undefined\n  -b, --beta ARG   β"]))))
