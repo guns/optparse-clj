@@ -65,7 +65,7 @@
 
 (defn compile-option-specs
   "Convert option vectors into a vector of complete option specifications.
-   Each option vector must supply at least two elements: [short-opt long-opt]
+   Each option vector must contain at least two elements: [short-opt long-opt]
 
    The short-opt may be nil, but long-opt must be a String beginning with two
    leading dashes. Throws AssertionError on any duplicate options.
@@ -86,9 +86,12 @@
   (let [[& {:keys [fallback]}] opts]
     (letfn [(expand [args]
               (if (keyword? (first args)) (cons nil args) args))
+            (d [value]
+              (if (keyword? value) (name value) value))
             (compile [[short-opt long-opt & more]]
-              (let [[desc & {:keys [default parse-fn assert]
-                             :or {default fallback}}] (expand more)
+              (let [[desc & {:keys [default default-desc parse-fn assert]
+                             :or {default ::undefined}}] (expand more)
+                    undefined? (= default ::undefined)
                     [assert-fn assert-msg] assert
                     [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
                 {:kw (keyword opt)
@@ -96,7 +99,8 @@
                  :long-opt (str "--" opt)
                  :required req
                  :desc desc
-                 :default default
+                 :default (if undefined? fallback default)
+                 :default-desc (str (or default-desc (if undefined? nil (d default))))
                  :parse-fn parse-fn
                  :assert-fn assert-fn
                  :assert-msg assert-msg}))]
@@ -158,16 +162,15 @@
 (defn summarize
   "Reduce options specs into a options summary for printing at a terminal."
   [specs]
-  (let [parts (map (fn [{:keys [short-opt long-opt required default desc]}]
+  (let [parts (map (fn [{:keys [short-opt long-opt required
+                                default default-desc desc]}]
                      [(let [s "  "
                             s (if short-opt
                                 (str s short-opt ", ")
                                 (str s "    "))
                             s (str s long-opt)]
                         (if required (str s \space required) s))
-                      (if (and required default)
-                        (if (keyword? default) (name default) (str default))
-                        "")
+                      default-desc
                       (or desc "")])
                    specs)
         [optlen vallen] (reduce (fn [[olen vlen] [o v _]]
@@ -206,7 +209,8 @@
 
      :fallback    Set :default values in option vectors that do not explicitly
                   indicate a :default value. This can be used to differentiate
-                  between undefined values and `nil`.
+                  between undefined values and `nil`. Fallback values are not
+                  included in the options summary.
 
    Returns [options-map remaining-args options-summary]
 

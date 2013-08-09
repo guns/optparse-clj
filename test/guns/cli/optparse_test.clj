@@ -33,6 +33,7 @@
                :required "NUMBER"
                :desc "Listen on this port"
                :default 80
+               :default-desc "80"
                :parse-fn pfn
                :assert-fn vfn
                :assert-msg "%s is not a valid port number"}]))))
@@ -44,6 +45,7 @@
              :required nil
              :desc nil
              :default nil
+             :default-desc ""
              :parse-fn nil
              :assert-fn nil
              :assert-msg nil}])))
@@ -55,6 +57,7 @@
              :required "ARG"
              :desc nil
              :default "FOO"
+             :default-desc "FOO"
              :parse-fn nil
              :assert-fn nil
              :assert-msg nil}])))
@@ -88,6 +91,7 @@
                 :required "NUMBER"
                 :desc "Listen on this port"
                 :default 80
+                :default-desc "80"
                 :parse-fn #(Integer/parseInt %)
                 :assert-fn #(< 0 % 0x10000)
                 :assert-msg "%s is not a valid port number"}
@@ -97,6 +101,7 @@
                 :required "HOST"
                 :desc nil
                 :default "localhost"
+                :default-desc "localhost"
                 :parse-fn nil
                 :assert-fn nil
                 :assert-msg nil}
@@ -106,6 +111,7 @@
                 :required "PROTO"
                 :desc nil
                 :default :tcp
+                :default-desc "tcp"
                 :parse-fn keyword
                 :assert-fn nil
                 :assert-msg nil}
@@ -115,6 +121,7 @@
                 :required nil
                 :desc nil
                 :default nil
+                :default-desc ""
                 :parse-fn nil
                 :assert-fn nil
                 :assert-msg nil}]]
@@ -139,6 +146,7 @@
                         :required "NUMBER"
                         :desc "Listen on this port"
                         :default 80
+                        :default-desc "80"
                         :parse-fn #(Integer/parseInt %)
                         :assert-fn #(< 0 % 0x10000)
                         :assert-msg nil}
@@ -148,6 +156,7 @@
                         :required "HOSTNAME"
                         :desc "Hostname to bind to"
                         :default "localhost"
+                        :default-desc "localhost"
                         :parse-fn nil
                         :assert-fn nil
                         :assert-msg nil}
@@ -157,6 +166,7 @@
                         :required nil
                         :desc "Be verbose"
                         :default nil
+                        :default-desc ""
                         :parse-fn keyword
                         :assert-fn nil
                         :assert-msg nil}])
@@ -171,6 +181,7 @@
                         :required nil
                         :desc nil
                         :default nil
+                        :default-desc ""
                         :parse-fn nil
                         :assert-fn nil
                         :assert-msg nil}])
@@ -220,4 +231,4 @@
                     :fallback ::undefined)
            [{:alpha ::undefined :beta \β}
             []
-            "  -a, --alpha ARG  undefined\n  -b, --beta ARG   β"]))))
+            "  -a, --alpha ARG\n  -b, --beta ARG   β"]))))
