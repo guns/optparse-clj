@@ -67,7 +67,7 @@
    Each option vector must supply at least two elements: [short-opt long-opt]
 
    The short-opt may be nil, but long-opt must be a String beginning with two
-   leading dashes: `--`
+   leading dashes. Throws AssertionError on any duplicate options.
 
    The following options are available:
 
@@ -75,14 +75,17 @@
                   have an explicit :default entry. nil by default; useful for
                   distinguishing the value `nil` from undefined values."
   [option-vectors & opts]
+  {:pre [(every? (fn [[_ long-opt & _]]
+                   (and (string? long-opt) (re-matches #"\A--[^ =].*" long-opt)))
+                 option-vectors)]
+   :post [(->> %
+               (mapcat (fn [v] (map v [:short-opt :long-opt])))
+               (filter identity)
+               (apply distinct?))]}
   (let [[& {:keys [fallback]}] opts]
     (letfn [(expand [args]
               (if (keyword? (first args)) (cons nil args) args))
-            (assert-long-opt [opt orig]
-              (assert (and (string? opt) (re-matches #"\A--[^ =].*" opt))
-                      (str "A long option is required: " (pr-str orig))))
-            (compile [[short-opt long-opt & more :as optv]]
-              (assert-long-opt long-opt optv)
+            (compile [[short-opt long-opt & more]]
               (let [[desc & {:keys [default parse-fn assert]
                              :or {default fallback}}] (expand more)
                     [assert-fn assert-msg] assert

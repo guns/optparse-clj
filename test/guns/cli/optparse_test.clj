@@ -68,7 +68,11 @@
     (is (thrown? AssertionError (o/compile-option-specs [[]])))
     (is (thrown? AssertionError (o/compile-option-specs [[nil nil]])))
     (is (thrown? AssertionError (o/compile-option-specs [[nil "--"]])))
-    (is (thrown? AssertionError (o/compile-option-specs [[nil "--="]])))))
+    (is (thrown? AssertionError (o/compile-option-specs [[nil "--="]]))))
+  (testing "option distinctness"
+    (is (thrown? AssertionError (o/compile-option-specs [["-a" "--alpha"] ["-a" "--alice"]])))
+    (is (thrown? AssertionError (o/compile-option-specs [["-a" "--alpha"] ["-b" "--alpha"]])))
+    (is (o/compile-option-specs [[nil "--alpha"] [nil "--beta"]]))))
 
 (deftest test-required-arguments
   (is (= (o/required-arguments
