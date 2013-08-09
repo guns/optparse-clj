@@ -77,13 +77,14 @@ If the long-opt string contains an example argument like `"--port NUMBER"` or
 `"--host=HOSTNAME"` (the equals sign is optional), the option is interpreted
 as requiring an argument.
 
-The following `:key value` options are supported in option vectors
+The following `:key value` options are supported in option vectors:
 
-Key         | Value
------------ | ----------------------------------------------------------------
-`:default`  | Default value of option
-`:parse-fn` | A function that receives the required option argument string and returns the interpreted value
-`:assert`   | A vector of `[assert-fn assert-msg]`.
+Key             | Value
+--------------- | ----------------------------------------------------------------
+`:default`      | Default value of option
+`:default-desc` | A string representing the default value in the summary; defaults to the string representation of `:default`
+`:parse-fn`     | A function that receives the required option argument string and returns the interpreted value
+`:assert`       | A vector of `[assert-fn assert-msg]`.
 
 `assert-fn` is a predicate that takes the required option value (after
 processing by `:parse-fn`) and returns true/false.
@@ -99,6 +100,7 @@ Given:
 ```clojure
 (ns example
   (:require [guns.cli.optparse :refer [parse]])
+  (:import (java.net InetAddress))
   (:gen-class))
 
 (def options
@@ -107,7 +109,9 @@ Given:
     :parse-fn #(Integer/parseInt %)
     :assert [#(< 0 % 0x10000) "%s is not a valid port number"]]
    [nil "--host HOST" "Bind to this hostname"
-    :default "localhost"]
+    :default-desc "localhost"
+    :default (InetAddress/getByName "localhost")
+    :parse-fn #(InetAddress/getByName %)]
    ["-d" "--detach" "Detach and run in the background"]
    ["-h" "--help"]])
 ```
@@ -123,8 +127,8 @@ Returns a vector of `[options-map remaining-args options-summary]`:
 ```clojure
 [{:help nil,
   :detach true,
-  :host "example.com",
-  :port 4000}
+  :host #<Inet4Address example.com/93.184.216.119>,
+  :port 80}
 
  ["command" "subcommand"]
 

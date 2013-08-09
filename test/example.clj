@@ -2,7 +2,8 @@
   "An example program with global and subcommand options."
   (:require [clojure.string :as string]
             [guns.cli.optparse :refer [parse]])
-  (:import (java.util.regex Pattern))
+  (:import (java.net InetAddress)
+           (java.util.regex Pattern))
   (:gen-class))
 
 (def version "1.0.0")
@@ -17,7 +18,9 @@
     :parse-fn #(Integer/parseInt %)
     :assert [#(< 0 % 0x10000) "%s is not a valid port number"]]
    [nil "--host HOST" "Bind to this hostname"
-    :default "localhost"]
+    :default-desc "localhost"
+    :default (InetAddress/getByName "localhost")
+    :parse-fn #(InetAddress/getByName %)]
    ["-d" "--detach" "Detach and run in the background"]
    ["-h" "--help"]])
 
@@ -59,7 +62,9 @@
   (let [[opts args summary] (parse argv server-options)]
     (if (:help opts)
       (println (format server-usage summary))
-      (do (println (format "Listening on %s:%d" (:host opts) (:port opts)))
+      (do (println (format "Listening on %s:%d"
+                           (.getHostAddress (:host opts))
+                           (:port opts)))
           (when (:detach opts) (println "Detaching from terminal!"))
           (println "Goodbye!")))))
 

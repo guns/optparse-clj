@@ -223,7 +223,9 @@
          :parse-fn #(Integer/parseInt %)
          :assert [#(< 0 % 0x10000) \"%s is not a valid port number\"]]
         [nil \"--host HOST\" \"Bind to this hostname\"
-         :default \"localhost\"]
+         :default-desc \"localhost\"
+         :default (java.net.InetAddress/getByName \"localhost\")
+         :parse-fn #(java.net.InetAddress/getByName %)]
         [\"-d\" \"--detach\" \"Detach and run in the background\"]
         [\"-h\" \"--help\"]])
 
@@ -231,9 +233,12 @@
 
    Returns:
 
-     [{:help nil, :detach true, :host \"example.com\", :port 4000}
+     [{:help nil,
+       :detach true,
+       :host #<Inet4Address example.com/93.184.216.119>,
+       :port 80}
 
-      [\"command\"]
+      [\"command\" \"subcommand\"]
 
       \"  -p, --port NUMBER  8080       Listen on this port
              --host HOST    localhost  Bind to this hostname
