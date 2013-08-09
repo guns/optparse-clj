@@ -19,7 +19,7 @@ option parsing conventions:
 [Leiningen][] dependency:
 
 ```clojure
-[guns.cli/optparse "1.0.0"]
+[guns.cli/optparse "1.0.1"]
 ```
 
 ## Features
