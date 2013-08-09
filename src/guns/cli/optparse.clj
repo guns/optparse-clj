@@ -115,7 +115,7 @@
    (when-not x
      (throw (new AssertionError (format "Failed to parse `%s`: %s" opt msg))))))
 
-(defn process-option-tokens
+(defn parse-option-tokens
   "Reduce sequence of [opt-type opt optarg] tuples into a map of options
    merged over the default values according to option specifications.
 
@@ -144,6 +144,10 @@
                     (assert-fn value) opt (format assert-msg (pr-str value))))
                 (assoc m kw value)))
             defaults opt-tokens)))
+
+(def ^:deprecated process-option-tokens
+  "Renamed to parse-option-tokens."
+  #'parse-option-tokens)
 
 (defn summarize
   "Reduce options specs into a options summary for printing at a terminal."
@@ -229,6 +233,6 @@
         specs (compile-option-specs options :fallback fallback)
         req (required-arguments specs)
         [opt-tokens rest-args] (tokenize-arguments req argv :in-order in-order)]
-    [(process-option-tokens specs opt-tokens)
+    [(parse-option-tokens specs opt-tokens)
      rest-args
      (summarize specs)]))

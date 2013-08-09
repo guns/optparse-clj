@@ -77,7 +77,7 @@
             {:required "FOO" :short-opt "-f" :long-opt "--foo"}])
          #{"--long" "-f" "--foo"})))
 
-(deftest test-process-option-tokens
+(deftest test-parse-option-tokens
   (let [specs [{:kw :port
                 :short-opt "-p"
                 :long-opt "--port"
@@ -114,19 +114,19 @@
                 :parse-fn nil
                 :assert-fn nil
                 :assert-msg nil}]]
-    (is (= (o/process-option-tokens specs [[:short-opt "-p" "443"] [:long-opt "--host" "example.com"]])
+    (is (= (o/parse-option-tokens specs [[:short-opt "-p" "443"] [:long-opt "--host" "example.com"]])
            {:port 443 :host "example.com" :protocol :tcp :help nil}))
-    (is (= (o/process-option-tokens specs [[:long-opt "--protocol" "udp"]])
+    (is (= (o/parse-option-tokens specs [[:long-opt "--protocol" "udp"]])
            {:port 80 :host "localhost" :protocol :udp :help nil}))
-    (is (true? (:help (o/process-option-tokens specs [[:long-opt "--help"]]))))
-    (is (thrown? AssertionError (o/process-option-tokens specs [[:long-opt "--port"]])))
-    (is (thrown? AssertionError (o/process-option-tokens specs [[:long-opt "--dwim"]])))
+    (is (true? (:help (o/parse-option-tokens specs [[:long-opt "--help"]]))))
+    (is (thrown? AssertionError (o/parse-option-tokens specs [[:long-opt "--port"]])))
+    (is (thrown? AssertionError (o/parse-option-tokens specs [[:long-opt "--dwim"]])))
     (is (thrown-with-msg?
           AssertionError #"100000.*is not a valid port number"
-          (o/process-option-tokens specs [[:long-opt "--port" "100000"]])))
+          (o/parse-option-tokens specs [[:long-opt "--port" "100000"]])))
     (is (thrown-with-msg?
           AssertionError #"INVALID.*is not a valid port number"
-          (o/process-option-tokens specs [[:long-opt "--port" "INVALID"]])))))
+          (o/parse-option-tokens specs [[:long-opt "--port" "INVALID"]])))))
 
 (deftest test-summarize
   (is (= (o/summarize [{:kw :port
