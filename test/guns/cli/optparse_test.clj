@@ -1,7 +1,7 @@
 (ns guns.cli.optparse-test
   (:require [clojure.string :as string]
             [guns.cli.optparse :as o]
-            [clojure.test :refer [deftest is]]))
+            [clojure.test :refer [deftest is testing]]))
 
 (deftest test-tokenize-arguments
   (let [required #{"-p" "--port" "--host" "-l" "--log-level" "--protocol"}]
@@ -19,22 +19,24 @@
            [[[:short-opt "-a"]] ["foo" "-b"]]))))
 
 (deftest test-compile-opt-specs
-  (let [pfn #(Integer/parseInt %)
-        vfn #(< 0 % 0x10000)]
-    (is (= (o/compile-option-specs
-             [["-p" "--port NUMBER" "Listen on this port"
+  (testing ":default :parse-fn and :assert entries"
+    (let [pfn #(Integer/parseInt %)
+          vfn #(< 0 % 0x10000)]
+      (is (= (o/compile-option-specs
+               [["-p" "--port NUMBER" "Listen on this port"
+                 :default 80
+                 :parse-fn pfn
+                 :assert [vfn "%s is not a valid port number"]]])
+             [{:kw :port
+               :short-opt "-p"
+               :long-opt "--port"
+               :required "NUMBER"
+               :desc "Listen on this port"
                :default 80
                :parse-fn pfn
-               :assert [vfn "%s is not a valid port number"]]])
-           [{:kw :port
-             :short-opt "-p"
-             :long-opt "--port"
-             :required "NUMBER"
-             :desc "Listen on this port"
-             :default 80
-             :parse-fn pfn
-             :assert-fn vfn
-             :assert-msg "%s is not a valid port number"}]))
+               :assert-fn vfn
+               :assert-msg "%s is not a valid port number"}]))))
+  (testing "minimal entries"
     (is (= (o/compile-option-specs [[nil "--minimal"]])
            [{:kw :minimal
              :short-opt nil
@@ -44,7 +46,12 @@
              :default nil
              :parse-fn nil
              :assert-fn nil
-             :assert-msg nil}]))))
+             :assert-msg nil}])))
+  (testing "input validation"
+    (is (thrown? AssertionError (o/compile-option-specs [[]])))
+    (is (thrown? AssertionError (o/compile-option-specs [[nil nil]])))
+    (is (thrown? AssertionError (o/compile-option-specs [[nil "--"]])))
+    (is (thrown? AssertionError (o/compile-option-specs [[nil "--="]])))))
 
 (deftest test-required-arguments
   (is (= (o/required-arguments

@@ -63,11 +63,18 @@
         [opts args]))))
 
 (defn compile-option-specs
-  "Convert option vectors into a vector of complete option specifications."
-  [options]
-  (mapv (fn [[short-opt long-opt desc & {:keys [default parse-fn assert]}]]
+  "Convert option vectors into a vector of complete option specifications.
+   Each option vector must supply at least two elements: [short-opt long-opt]
+
+   The short-opt may be nil, but long-opt must be a String beginning with two
+   leading dashes: `--`"
+  [option-vectors & opts]
+  (mapv (fn [[short-opt long-opt desc & {:keys [default parse-fn assert]} :as optv]]
           (let [[assert-fn assert-msg] assert
-                [_ opt req] (re-find #"--([^ =]+)(?:[ =](.*))?" long-opt)]
+                _ (clojure.core/assert
+                    (and (string? long-opt) (re-matches #"\A--[^ =].*" long-opt))
+                    (str "A long option is required: " (pr-str optv)))
+                [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
             {:kw (keyword opt)
              :short-opt short-opt
              :long-opt (str "--" opt)
@@ -77,7 +84,7 @@
              :parse-fn parse-fn
              :assert-fn assert-fn
              :assert-msg assert-msg}))
-        options))
+        option-vectors))
 
 (defn required-arguments
   "Extract set of short and long options that require arguments."
