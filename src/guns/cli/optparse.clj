@@ -71,12 +71,13 @@
   [option-vectors & opts]
   (letfn [(expand [args]
             (if (keyword? (first args)) (cons nil args) args))
+          (assert-long-opt [opt orig]
+            (assert (and (string? opt) (re-matches #"\A--[^ =].*" opt))
+                    (str "A long option is required: " (pr-str orig))))
           (compile [[short-opt long-opt & more :as optv]]
+            (assert-long-opt long-opt optv)
             (let [[desc & {:keys [default parse-fn assert]}] (expand more)
                   [assert-fn assert-msg] assert
-                  _ (clojure.core/assert
-                      (and (string? long-opt) (re-matches #"\A--[^ =].*" long-opt))
-                      (str "A long option is required: " (pr-str optv)))
                   [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
               {:kw (keyword opt)
                :short-opt short-opt
