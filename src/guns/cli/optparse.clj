@@ -173,10 +173,11 @@
                       default-desc
                       (or desc "")])
                    specs)
-        [optlen vallen] (reduce (fn [[olen vlen] [o v _]]
-                                  [(max olen (count o)) (max vlen (count v))])
+        [optlen deflen] (reduce (fn [[olen dlen] [o d _]]
+                                  [(max olen (count o)) (max dlen (count d))])
                                 [0 0] parts)
-        fmt (str "%-" (inc optlen) "s %-" (inc vallen) "s %s")
+        fmt (str "%" (- (+ optlen 2)) "s"
+                 "%" (if (zero? deflen) "" (- (+ 2 deflen))) "s%s")
         lines (map #(string/trimr (apply format fmt %)) parts)]
     (string/join \newline lines)))
 
