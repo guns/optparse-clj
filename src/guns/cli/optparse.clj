@@ -45,17 +45,18 @@
                            args cdr))
           ;; Short options, expands clumped opts until an optarg is required
           #"\A-." (let [characters (take-while seq (iterate rest (seq (.substring car 1))))
-                        [os cdr] (reduce (fn [[os tail] [c & cs]]
-                                           (let [o (str \- c)]
-                                             (if (required o)
-                                               (reduced
-                                                 (if (seq cs)
-                                                   ;; Get optarg from rest of car
-                                                   [(conj os [:short-opt o (string/join cs)]) tail]
-                                                   ;; Get optarg from head of cdr
-                                                   [(conj os [:short-opt o (first tail)]) (rest tail)]))
-                                               [(conj os [:short-opt o]) tail])))
-                                         [[] cdr] characters)]
+                        [os cdr] (reduce
+                                   (fn [[os tail] [c & cs]]
+                                     (let [o (str \- c)]
+                                       (if (required o)
+                                         (reduced
+                                           (if (seq cs)
+                                             ;; Get optarg from rest of car
+                                             [(conj os [:short-opt o (string/join cs)]) tail]
+                                             ;; Get optarg from head of cdr
+                                             [(conj os [:short-opt o (first tail)]) (rest tail)]))
+                                         [(conj os [:short-opt o]) tail])))
+                                   [[] cdr] characters)]
                     (recur (into opts os) args cdr))
           (if in-order
             (recur opts (into args (cons car cdr)) [])
@@ -104,13 +105,14 @@
 (defn required-arguments
   "Extract set of short and long options that require arguments."
   [specs]
-  (reduce (fn [s {:keys [required short-opt long-opt]}]
-            (if required
-              (cond-> s
-                short-opt (conj short-opt)
-                long-opt (conj long-opt))
-              s))
-          #{} specs))
+  (reduce
+    (fn [s {:keys [required short-opt long-opt]}]
+      (if required
+        (cond-> s
+          short-opt (conj short-opt)
+          long-opt (conj long-opt))
+        s))
+    #{} specs))
 
 (defn- assert-option
   "Custom assert function. Throws AssertionErrors."
@@ -127,26 +129,27 @@
   [specs opt-tokens]
   (let [defaults (reduce (fn [m sp] (assoc m (:kw sp) (:default sp)))
                          {} specs)]
-    (reduce (fn [m [otype opt arg]]
-              (let [spec (first (filter #(= opt (otype %)) specs))
-                    {:keys [kw required parse-fn assert-fn assert-msg]} spec
-                    assert-msg (or assert-msg "Invalid option argument: %s")
-                    _ (do (assert-option spec opt "Invalid option")
-                          (when required
-                            (assert-option
-                              arg opt (format "Missing required argument %s" (pr-str required)))))
-                    value (let [v (if required arg true)]
-                            (if parse-fn
-                              (try (parse-fn v)
-                                   (catch Throwable _
-                                     (assert-option
-                                       false opt (format assert-msg (pr-str v)))))
-                              v))]
-                (when assert-fn
-                  (assert-option
-                    (assert-fn value) opt (format assert-msg (pr-str value))))
-                (assoc m kw value)))
-            defaults opt-tokens)))
+    (reduce
+      (fn [m [otype opt arg]]
+        (let [spec (first (filter #(= opt (otype %)) specs))
+              {:keys [kw required parse-fn assert-fn assert-msg]} spec
+              assert-msg (or assert-msg "Invalid option argument: %s")
+              _ (do (assert-option spec opt "Invalid option")
+                    (when required
+                      (assert-option
+                        arg opt (format "Missing required argument %s" (pr-str required)))))
+              value (let [v (if required arg true)]
+                      (if parse-fn
+                        (try (parse-fn v)
+                             (catch Throwable _
+                               (assert-option
+                                 false opt (format assert-msg (pr-str v)))))
+                        v))]
+          (when assert-fn
+            (assert-option
+              (assert-fn value) opt (format assert-msg (pr-str value))))
+          (assoc m kw value)))
+      defaults opt-tokens)))
 
 (def ^:deprecated process-option-tokens
   "Renamed to parse-option-tokens."
