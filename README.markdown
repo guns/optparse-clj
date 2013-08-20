@@ -139,8 +139,8 @@ Returns a vector of `[options-map remaining-args options-summary]`:
 ```
 
 A complete example program with both global and subcommand options handling
-can be found in [test/example.clj][], and may also be tested from the command
-line:
+can be found in [src-example/example.clj][], and may also be tested from the
+command line:
 
 ```
 $ lein example server -dp80 --host=example.com
@@ -186,6 +186,6 @@ SOFTWARE.
 ```
 
 [clojure.tools.cli]: https://github.com/clojure/tools.cli
-[test/example.clj]: test/example.clj
+[src-example/example.clj]: src-example/example.clj
 [Leiningen]: http://leiningen.org/
 [OptionParser]: http://ruby-doc.org/stdlib-2.0/libdoc/optparse/rdoc/OptionParser.html
