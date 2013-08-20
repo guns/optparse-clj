@@ -120,9 +120,9 @@
 
 (defn- assert-option
   "Custom assert function. Throws AssertionErrors."
-  ([x opt msg]
-   (when-not x
-     (throw (new AssertionError (format "Failed to parse `%s`: %s" opt msg))))))
+  [x opt msg]
+  (when-not x
+    (throw (new AssertionError (format "Failed to parse `%s`: %s" opt msg)))))
 
 (defn parse-option-tokens
   "Reduce sequence of [opt-type opt optarg] tuples into a map of options
