@@ -17,4 +17,5 @@
                                                :compiler {:output-to "target/example-prod.js"
                                                           :optimizations :advanced
                                                           :pretty-print false
-                                                          :target :nodejs}}}}}})
+                                                          :target :nodejs
+                                                          :externs ["src-example/externs/process.js"]}}}}}})
