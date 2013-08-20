@@ -70,11 +70,35 @@
    The short-opt may be nil, but long-opt must be a String beginning with two
    leading dashes. Throws AssertionError on any duplicate options.
 
-   The following options are available:
+   The following options are supported in option vectors:
 
-     :fallback    Specify a fallback default value for options that do not
-                  have an explicit :default entry. nil by default; useful for
-                  distinguishing the value `nil` from undefined values."
+     :key           The key to use in the options map; defaults to long-opt
+                    keywordized
+
+     :default       Default value of option
+
+     :default-desc  A string representing the default value in the summary;
+                    defaults to the string representation of :default
+
+     :parse-fn      A function that receives the required option argument
+                    string and returns the interpreted value
+
+     :assert        A vector of [assert-fn assert-msg]
+
+                    assert-fn is a predicate that takes the required option
+                    value (after processing by :parse-fn) and returns
+                    true/false.
+
+                    assert-msg is the message used when throwing an
+                    AssertionError when :assert-fn returns false. It may
+                    contain a single %s format specifier that will be replaced
+                    with the optval.
+
+   The following call options are available:
+
+     :fallback      Specify a fallback default value for options that do not
+                    have an explicit :default entry. nil by default; useful
+                    for distinguishing the value `nil` from undefined values."
   [option-vectors & opts]
   {:pre [(every? (fn [[_ long-opt & _]]
                    (and (string? long-opt) (re-matches #"^--[^ =].*" long-opt)))
@@ -89,7 +113,7 @@
             (d [value]
               (if (keyword? value) (name value) value))
             (compile [[short-opt long-opt & more]]
-              (let [[desc & {:keys [default default-desc parse-fn assert key]
+              (let [[desc & {:keys [key default default-desc parse-fn assert]
                              :or {default ::undefined}}] (expand more)
                     undefined? (= default ::undefined)
                     [assert-fn assert-msg] assert
@@ -203,7 +227,7 @@
    Otherwise, options are assumed to be boolean flags, defaulting to nil.
    \"--[no-]option\" variations are currently not implicitly supported.
 
-   The following keyword options are available:
+   The following call options are available:
 
      :in-order    Process arguments in order, stopping on the first non-option
                   non-optarg argument.
@@ -212,6 +236,9 @@
                   indicate a :default value. This can be used to differentiate
                   between undefined values and `nil`. Fallback values are not
                   included in the options summary.
+
+   See the documentation for #'compile-option-specs for more information on
+   option vectors.
 
    Returns [options-map remaining-args options-summary]
 

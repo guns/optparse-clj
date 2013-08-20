@@ -54,7 +54,7 @@ Option vectors are composed of:
 
 ```clojure
 [short-opt long-opt description
- :key value …]
+ :keyword value …]
 
 ;; Examples
 
@@ -77,10 +77,11 @@ If the long-opt string contains an example argument like `"--port NUMBER"` or
 `"--host=HOSTNAME"` (the equals sign is optional), the option is interpreted
 as requiring an argument.
 
-The following `:key value` options are supported in option vectors:
+The following option pairs are supported in option vectors:
 
 Key             | Value
 --------------- | ----------------------------------------------------------------
+`:key`          | The key to use in the options map; defaults to `long-opt` keywordized
 `:default`      | Default value of option
 `:default-desc` | A string representing the default value in the summary; defaults to the string representation of `:default`
 `:parse-fn`     | A function that receives the required option argument string and returns the interpreted value
