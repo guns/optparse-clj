@@ -13,8 +13,8 @@
                                                          :optimizations :simple
                                                          :pretty-print true
                                                          :target :nodejs}}
-                                        :example {:source-paths ["src-cljs" "src-example"]
-                                                  :compiler {:output-to "target/example-prod.js"
-                                                             :optimizations :advanced
-                                                             :pretty-print false
-                                                             :target :nodejs}}}}}})
+                                        :prod {:source-paths ["src-cljs" "src-example"]
+                                               :compiler {:output-to "target/example-prod.js"
+                                                          :optimizations :advanced
+                                                          :pretty-print false
+                                                          :target :nodejs}}}}}})
