@@ -3,18 +3,18 @@
   :description "OptionParser for Clojure: Functional GNU-style command line options parser."
   :license {:name "MIT License"
             :url "http://www.opensource.org/licenses/mit-license.php"}
-  :aliases {"example" ["trampoline" "run" "-m" "example"]}
   :dependencies [[org.clojure/clojure "1.5.1"]]
   :source-paths ["src" "src-cljs"]
-  ;; ClojureScript
-  :profiles {:dev {:plugins [[lein-cljsbuild "0.3.2"]]
-                   :cljsbuild {:builds {:dev {:source-paths ["src-cljs"]
-                                              :compiler {:output-to "target/optparse-dev.js"
-                                                         :optimizations :whitespace
-                                                         :target :nodejs
-                                                         :pretty-print true}}
-                                        :prod {:source-paths ["src-cljs"]
-                                               :compiler {:output-to "target/optparse-prod.js"
-                                                          :optimizations :advanced
-                                                          :pretty-print false
-                                                          :target :nodejs}}}}}})
+  :aliases {"example" ["trampoline" "run" "-m" "example"]}
+  :profiles {:dev {:source-paths ["src" "src-cljs" "src-example"]
+                   :plugins [[lein-cljsbuild "0.3.2"]]
+                   :cljsbuild {:builds {:dev {:source-paths ["src-cljs" "src-example"]
+                                              :compiler {:output-to "target/example-dev.js"
+                                                         :optimizations :simple
+                                                         :pretty-print true
+                                                         :target :nodejs}}
+                                        :example {:source-paths ["src-cljs" "src-example"]
+                                                  :compiler {:output-to "target/example-prod.js"
+                                                             :optimizations :advanced
+                                                             :pretty-print false
+                                                             :target :nodejs}}}}}})
