@@ -67,6 +67,10 @@
                                  [nil "--beta ARG" :default \β]]
                                 :fallback ::undefined)))
            #{::undefined \β})))
+  (testing "user-definable :key"
+    (is (= (set (map :key (o/compile-option-specs [["-a" "--alpha" :key "α"]
+                                                   ["-b" "--beta" :key :beta?]])))
+           #{"α" :beta?})))
   (testing "input validation"
     (is (thrown? AssertionError (o/compile-option-specs [[]])))
     (is (thrown? AssertionError (o/compile-option-specs [[nil nil]])))
@@ -199,6 +203,7 @@
                     :parse-fn #(Integer/parseInt %)
                     :default 1]
                    [nil "--protocol PROTO" nil
+                    :key :proto
                     :parse-fn keyword
                     :default :tcp]
                    ["-v" "--verbose" nil]
@@ -206,7 +211,7 @@
          [{:port 443
            :host "example.com"
            :log-level 2
-           :protocol :udp
+           :proto :udp
            :verbose true
            :noop nil}
           ["arg" "-n" "--noop" "foo" "bar"]

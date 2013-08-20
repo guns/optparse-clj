@@ -89,12 +89,12 @@
             (d [value]
               (if (keyword? value) (name value) value))
             (compile [[short-opt long-opt & more]]
-              (let [[desc & {:keys [default default-desc parse-fn assert]
+              (let [[desc & {:keys [default default-desc parse-fn assert key]
                              :or {default ::undefined}}] (expand more)
                     undefined? (= default ::undefined)
                     [assert-fn assert-msg] assert
                     [_ opt req] (re-find #"^--([^ =]+)(?:[ =](.*))?" long-opt)]
-                {:key (keyword opt)
+                {:key (or key (keyword opt))
                  :short-opt short-opt
                  :long-opt (str "--" opt)
                  :required req
