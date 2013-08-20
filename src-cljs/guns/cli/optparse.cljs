@@ -3,7 +3,7 @@
 ;; http://www.opensource.org/licenses/mit-license.php
 
 (ns guns.cli.optparse
-  "OptionParser for Clojure. Works like clojure.tools.cli, but supports GNU
+  "OptionParser for ClojureScript. Works like clojure.tools.cli, but supports GNU
    option parsing conventions:
 
    https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html

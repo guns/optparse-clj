@@ -9,8 +9,8 @@
       |_|       |_|                                 |__/
 ```
 
-OptionParser for Clojure. Works like [clojure.tools.cli][], but supports GNU
-option parsing conventions:
+OptionParser for Clojure and ClojureScript. Works like [clojure.tools.cli][],
+but supports GNU option parsing conventions:
 
 <https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html>
 
@@ -19,7 +19,7 @@ option parsing conventions:
 [Leiningen][] dependency:
 
 ```clojure
-[guns.cli/optparse "1.0.1"]
+[guns.cli/optparse "1.1.0"]
 ```
 
 ## Features
@@ -95,6 +95,9 @@ will be replaced with the optval.
 
 ## Examples
 
+The following examples are for Clojure, but optparse-clj also works in
+ClojureScript.
+
 Given:
 
 ```clojure
@@ -149,6 +152,8 @@ Detaching from terminal!
 Goodbye!
 ```
 
+A ClojureScript example is available at [src-example/example.cljs][].
+
 ## TODO
 
 - [ ] Support multiple invocations of an option:
@@ -187,5 +192,6 @@ SOFTWARE.
 
 [clojure.tools.cli]: https://github.com/clojure/tools.cli
 [src-example/example.clj]: src-example/example.clj
+[src-example/example.cljs]: src-example/example.cljs
 [Leiningen]: http://leiningen.org/
 [OptionParser]: http://ruby-doc.org/stdlib-2.0/libdoc/optparse/rdoc/OptionParser.html
