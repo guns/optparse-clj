@@ -8,8 +8,8 @@
 
    https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
-   See test/example.clj for example program with global options, subcommands,
-   and subcommand options handling."
+   See src-example/example.clj for example program with global options,
+   subcommands, and subcommand options handling."
   (:require [clojure.string :as string]))
 
 (defn tokenize-arguments
