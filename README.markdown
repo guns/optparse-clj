@@ -19,7 +19,7 @@ but supports GNU option parsing conventions:
 [Leiningen][] dependency:
 
 ```clojure
-[guns.cli/optparse "1.1.0"]
+[guns.cli/optparse "1.1.1"]
 ```
 
 ## Features
