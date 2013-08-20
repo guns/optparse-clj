@@ -94,7 +94,7 @@
                     undefined? (= default ::undefined)
                     [assert-fn assert-msg] assert
                     [_ opt req] (re-find #"^--([^ =]+)(?:[ =](.*))?" long-opt)]
-                {:kw (keyword opt)
+                {:key (keyword opt)
                  :short-opt short-opt
                  :long-opt (str "--" opt)
                  :required req
@@ -131,12 +131,12 @@
    Throws AssertionError on invalid options, missing required arguments,
    option argument parsing exceptions, and validation failures."
   [specs opt-tokens]
-  (let [defaults (reduce (fn [m sp] (assoc m (:kw sp) (:default sp)))
+  (let [defaults (reduce (fn [m sp] (assoc m (:key sp) (:default sp)))
                          {} specs)]
     (reduce
       (fn [m [otype opt arg]]
         (let [spec (first (filter #(= opt (otype %)) specs))
-              {:keys [kw required parse-fn assert-fn assert-msg]} spec
+              {:keys [key required parse-fn assert-fn assert-msg]} spec
               assert-msg (or assert-msg "Invalid option argument: %s")
               _ (do (assert-option spec opt "Invalid option")
                     (when required
@@ -152,7 +152,7 @@
           (when assert-fn
             (assert-option
               (assert-fn value) opt (format assert-msg (pr-str value))))
-          (assoc m kw value)))
+          (assoc m key value)))
       defaults opt-tokens)))
 
 (def ^:deprecated process-option-tokens

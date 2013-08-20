@@ -27,7 +27,7 @@
                  :default 80
                  :parse-fn pfn
                  :assert [vfn "%s is not a valid port number"]]])
-             [{:kw :port
+             [{:key :port
                :short-opt "-p"
                :long-opt "--port"
                :required "NUMBER"
@@ -39,7 +39,7 @@
                :assert-msg "%s is not a valid port number"}]))))
   (testing "minimal entries"
     (is (= (o/compile-option-specs [[nil "--minimal"]])
-           [{:kw :minimal
+           [{:key :minimal
              :short-opt nil
              :long-opt "--minimal"
              :required nil
@@ -51,7 +51,7 @@
              :assert-msg nil}])))
   (testing "description is optional"
     (is (= (o/compile-option-specs [[nil "--foo ARG" :default "FOO"]])
-           [{:kw :foo
+           [{:key :foo
              :short-opt nil
              :long-opt "--foo"
              :required "ARG"
@@ -85,7 +85,7 @@
          #{"--long" "-f" "--foo"})))
 
 (deftest test-parse-option-tokens
-  (let [specs [{:kw :port
+  (let [specs [{:key :port
                 :short-opt "-p"
                 :long-opt "--port"
                 :required "NUMBER"
@@ -95,7 +95,7 @@
                 :parse-fn #(Integer/parseInt %)
                 :assert-fn #(< 0 % 0x10000)
                 :assert-msg "%s is not a valid port number"}
-               {:kw :host
+               {:key :host
                 :short-opt nil
                 :long-opt "--host"
                 :required "HOST"
@@ -105,7 +105,7 @@
                 :parse-fn nil
                 :assert-fn nil
                 :assert-msg nil}
-               {:kw :protocol
+               {:key :protocol
                 :short-opt nil
                 :long-opt "--protocol"
                 :required "PROTO"
@@ -115,7 +115,7 @@
                 :parse-fn keyword
                 :assert-fn nil
                 :assert-msg nil}
-               {:kw :help
+               {:key :help
                 :short-opt "-h"
                 :long-opt "--help"
                 :required nil
@@ -140,7 +140,7 @@
           (o/parse-option-tokens specs [[:long-opt "--port" "INVALID"]])))))
 
 (deftest test-summarize
-  (is (= (o/summarize [{:kw :port
+  (is (= (o/summarize [{:key :port
                         :short-opt "-p"
                         :long-opt "--port"
                         :required "NUMBER"
@@ -150,7 +150,7 @@
                         :parse-fn #(Integer/parseInt %)
                         :assert-fn #(< 0 % 0x10000)
                         :assert-msg nil}
-                       {:kw :host
+                       {:key :host
                         :short-opt nil
                         :long-opt "--host"
                         :required "HOSTNAME"
@@ -160,7 +160,7 @@
                         :parse-fn nil
                         :assert-fn nil
                         :assert-msg nil}
-                       {:kw :verbose
+                       {:key :verbose
                         :short-opt "-v"
                         :long-opt "--verbose"
                         :required nil
@@ -175,7 +175,7 @@
            ["  -p, --port NUMBER    80         Listen on this port"
             "      --host HOSTNAME  localhost  Hostname to bind to"
             "  -v, --verbose                   Be verbose"])))
-  (is (= (o/summarize [{:kw :minimal
+  (is (= (o/summarize [{:key :minimal
                         :short-opt nil
                         :long-opt "--minimal"
                         :required nil
