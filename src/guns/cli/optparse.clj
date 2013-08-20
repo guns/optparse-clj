@@ -104,7 +104,7 @@
                    (and (string? long-opt) (re-matches #"^--[^ =].*" long-opt)))
                  option-vectors)]
    :post [(->> %
-               (mapcat (fn [v] (map v [:short-opt :long-opt])))
+               (mapcat (fn [v] (map v [:key :short-opt :long-opt])))
                (filter identity)
                (apply distinct?))]}
   (let [[& {:keys [fallback]}] opts]
