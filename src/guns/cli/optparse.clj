@@ -38,8 +38,8 @@
           #"\A--.+=" (recur (conj opts (into [:long-opt] (string/split car #"=" 2)))
                             args cdr)
           ;; Long options, consumes cdr head if needed
-          #"\A--" (let [[[optarg] cdr] (if (required car)
-                                         (split-at 1 cdr)
+          #"\A--" (let [[optarg cdr] (if (required car)
+                                         [(first cdr) (rest cdr)]
                                          [nil cdr])]
                     (recur (conj opts (into [:long-opt car] (if optarg [optarg] [])))
                            args cdr))
