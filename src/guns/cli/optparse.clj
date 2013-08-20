@@ -33,31 +33,31 @@
       (if car
         (condp re-seq car
           ;; Double dash always ends options processing
-          #"\A--\z" (recur opts (into args cdr) [])
+          #"^--$" (recur opts (into args cdr) [])
           ;; Long options with assignment always passes optarg, required or not
-          #"\A--.+=" (recur (conj opts (into [:long-opt] (string/split car #"=" 2)))
-                            args cdr)
+          #"^--.+=" (recur (conj opts (into [:long-opt] (string/split car #"=" 2)))
+                           args cdr)
           ;; Long options, consumes cdr head if needed
-          #"\A--" (let [[optarg cdr] (if (required car)
-                                         [(first cdr) (rest cdr)]
-                                         [nil cdr])]
-                    (recur (conj opts (into [:long-opt car] (if optarg [optarg] [])))
-                           args cdr))
+          #"^--" (let [[optarg cdr] (if (required car)
+                                      [(first cdr) (rest cdr)]
+                                      [nil cdr])]
+                   (recur (conj opts (into [:long-opt car] (if optarg [optarg] [])))
+                          args cdr))
           ;; Short options, expands clumped opts until an optarg is required
-          #"\A-." (let [characters (take-while seq (iterate rest (seq (.substring car 1))))
-                        [os cdr] (reduce
-                                   (fn [[os tail] [c & cs]]
-                                     (let [o (str \- c)]
-                                       (if (required o)
-                                         (reduced
-                                           (if (seq cs)
-                                             ;; Get optarg from rest of car
-                                             [(conj os [:short-opt o (string/join cs)]) tail]
-                                             ;; Get optarg from head of cdr
-                                             [(conj os [:short-opt o (first tail)]) (rest tail)]))
-                                         [(conj os [:short-opt o]) tail])))
-                                   [[] cdr] characters)]
-                    (recur (into opts os) args cdr))
+          #"^-." (let [characters (take-while seq (iterate rest (seq (.substring car 1))))
+                       [os cdr] (reduce
+                                  (fn [[os tail] [c & cs]]
+                                    (let [o (str \- c)]
+                                      (if (required o)
+                                        (reduced
+                                          (if (seq cs)
+                                            ;; Get optarg from rest of car
+                                            [(conj os [:short-opt o (string/join cs)]) tail]
+                                            ;; Get optarg from head of cdr
+                                            [(conj os [:short-opt o (first tail)]) (rest tail)]))
+                                        [(conj os [:short-opt o]) tail])))
+                                  [[] cdr] characters)]
+                   (recur (into opts os) args cdr))
           (if in-order
             (recur opts (into args (cons car cdr)) [])
             (recur opts (conj args car) cdr)))
@@ -77,7 +77,7 @@
                   distinguishing the value `nil` from undefined values."
   [option-vectors & opts]
   {:pre [(every? (fn [[_ long-opt & _]]
-                   (and (string? long-opt) (re-matches #"\A--[^ =].*" long-opt)))
+                   (and (string? long-opt) (re-matches #"^--[^ =].*" long-opt)))
                  option-vectors)]
    :post [(->> %
                (mapcat (fn [v] (map v [:short-opt :long-opt])))
@@ -93,7 +93,7 @@
                              :or {default ::undefined}}] (expand more)
                     undefined? (= default ::undefined)
                     [assert-fn assert-msg] assert
-                    [_ opt req] (re-find #"\A--([^ =]+)(?:[ =](.*))?" long-opt)]
+                    [_ opt req] (re-find #"^--([^ =]+)(?:[ =](.*))?" long-opt)]
                 {:kw (keyword opt)
                  :short-opt short-opt
                  :long-opt (str "--" opt)
