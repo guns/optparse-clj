@@ -3,8 +3,8 @@
 ;; http://www.opensource.org/licenses/mit-license.php
 
 (ns guns.cli.optparse
-  "OptionParser for Clojure. Works like clojure.tools.cli, but supports GNU
-   option parsing conventions:
+  "OptionParser for Clojure and ClojureScript. Works like clojure.tools.cli,
+   but supports GNU option parsing conventions:
 
    https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
 
@@ -68,7 +68,7 @@
    Each option vector must contain at least two elements: [short-opt long-opt]
 
    The short-opt may be nil, but long-opt must be a String beginning with two
-   leading dashes. Throws AssertionError on any duplicate options.
+   leading dashes. Throws AssertionError or js/Error on any duplicate options.
 
    The following options are supported in option vectors:
 
@@ -143,17 +143,18 @@
     #{} specs))
 
 (defn- assert-option
-  "Custom assert function. Throws AssertionErrors."
+  "Custom assert function. Throws AssertionError or js/Error."
   [x opt msg]
   (when-not x
-    (throw (AssertionError. (format "Failed to parse `%s`: %s" opt msg)))))
+    (throw (#+clj AssertionError. #+cljs js/Error.
+                  (format "Failed to parse `%s`: %s" opt msg)))))
 
 (defn parse-option-tokens
   "Reduce sequence of [opt-type opt optarg] tuples into a map of options
    merged over the default values according to option specifications.
 
-   Throws AssertionError on invalid options, missing required arguments,
-   option argument parsing exceptions, and validation failures."
+   Throws AssertionError or js/Error on invalid options, missing required
+   arguments, option argument parsing exceptions, and validation failures."
   [specs opt-tokens]
   (let [defaults (reduce (fn [m sp] (assoc m (:key sp) (:default sp)))
                          {} specs)]
@@ -169,7 +170,7 @@
               value (let [v (if required arg true)]
                       (if parse-fn
                         (try (parse-fn v)
-                             (catch Throwable _
+                             (catch #+clj Throwable #+cljs js/Error _
                                (assert-option
                                  false opt (format assert-msg (pr-str v)))))
                         v))]
@@ -179,6 +180,7 @@
           (assoc m key value)))
       defaults opt-tokens)))
 
+#+clj
 (def ^:deprecated process-option-tokens
   "Renamed to parse-option-tokens."
   #'parse-option-tokens)
@@ -221,8 +223,8 @@
 
    If a long option is followed by a space (or `=`) and an example argument
    string, an option argument will be required and passed to :parse-fn. The
-   resulting value is validated with :assert, throwing an AssertionError on
-   failure.
+   resulting value is validated with :assert, throwing an AssertionError or
+   js/Error on failure.
 
    Otherwise, options are assumed to be boolean flags, defaulting to nil.
    \"--[no-]option\" variations are currently not implicitly supported.

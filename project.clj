@@ -4,18 +4,25 @@
   :license {:name "MIT License"
             :url "http://www.opensource.org/licenses/mit-license.php"}
   :dependencies [[org.clojure/clojure "1.5.1"]]
-  :source-paths ["src" "src-cljs"]
-  :aliases {"example" ["trampoline" "run" "-m" "example"]}
-  :profiles {:dev {:source-paths ["src" "src-cljs" "src-example"]
-                   :plugins [[lein-cljsbuild "0.3.2"]]
-                   :cljsbuild {:builds {:dev {:source-paths ["src-cljs" "src-example"]
-                                              :compiler {:output-to "target/example-dev.js"
-                                                         :optimizations :simple
-                                                         :pretty-print true
-                                                         :target :nodejs}}
-                                        :prod {:source-paths ["src-cljs" "src-example"]
-                                               :compiler {:output-to "target/example-prod.js"
-                                                          :optimizations :advanced
-                                                          :pretty-print false
-                                                          :target :nodejs
-                                                          :externs ["src-example/externs/process.js"]}}}}}})
+  :profiles {:dev {:source-paths ["src-example"]
+                   :aliases {"example" ["trampoline" "run" "-m" "example"]}
+                   :plugins [[com.keminglabs/cljx "0.3.0"]
+                             [lein-cljsbuild "0.3.2"]]
+                   :cljx {:builds [{:source-paths ["src-cljx"]
+                                    :output-path "target/classes"
+                                    :rules :clj}
+                                   {:source-paths ["src-cljx"]
+                                    :output-path "target/classes"
+                                    :rules :cljs}]}
+                   ;; JS builds for local testing only
+                   :cljsbuild {:builds [{:source-paths ["target/classes" "src-example"]
+                                         :compiler {:output-to "target/example-dev.js"
+                                                    :optimizations :simple
+                                                    :pretty-print true
+                                                    :target :nodejs}}
+                                        {:source-paths ["target/classes" "src-example"]
+                                         :compiler {:output-to "target/example.js"
+                                                    :optimizations :advanced
+                                                    :pretty-print false
+                                                    :target :nodejs
+                                                    :externs ["src-example/externs/process.js"]}}]}}})
