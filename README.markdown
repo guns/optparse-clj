@@ -153,7 +153,19 @@ Detaching from terminal!
 Goodbye!
 ```
 
-A ClojureScript example is available at [src-example/example.cljs][].
+A ClojureScript example is available at [src-example/example.cljs][]. The
+Node.js script can be compiled and run with:
+
+```
+$ lein cljs
+Rewriting src-cljx to target/classes (clj) with features #{clj} and 0 transformations.
+Rewriting src-cljx to target/classes (cljs) with features #{cljs} and 1 transformations.
+Compiling ClojureScript.
+$ node target/example.js server -dp80 --host=example.com
+Listening on example.com:80
+Detaching from terminal!
+Goodbye!
+```
 
 ## TODO
 

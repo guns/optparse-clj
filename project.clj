@@ -5,7 +5,8 @@
             :url "http://www.opensource.org/licenses/mit-license.php"}
   :dependencies [[org.clojure/clojure "1.5.1"]]
   :profiles {:dev {:source-paths ["src-example"]
-                   :aliases {"example" ["trampoline" "run" "-m" "example"]}
+                   :aliases {"example" ["trampoline" "run" "-m" "example"]
+                             "cljs" ["do" "cljx" "once," "cljsbuild" "once"]}
                    :plugins [[com.keminglabs/cljx "0.3.0"]
                              [lein-cljsbuild "0.3.2"]]
                    :cljx {:builds [{:source-paths ["src-cljx"]
