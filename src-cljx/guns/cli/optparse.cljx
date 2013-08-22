@@ -44,7 +44,7 @@
                    (recur (conj opts (into [:long-opt car] (if optarg [optarg] [])))
                           args cdr))
           ;; Short options, expands clumped opts until an optarg is required
-          #"^-." (let [characters (take-while seq (iterate rest (seq (.substring car 1))))
+          #"^-." (let [characters (take-while seq (iterate rest (rest car)))
                        [os cdr] (reduce
                                   (fn [[os tail] [c & cs]]
                                     (let [o (str \- c)]
