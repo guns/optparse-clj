@@ -63,7 +63,7 @@
     (if (:help opts)
       (println (format server-usage summary))
       (do (println (format "Listening on %s:%d"
-                           (.getHostAddress (:host opts))
+                           (.getHostAddress ^InetAddress (:host opts))
                            (:port opts)))
           (when (:detach opts) (println "Detaching from terminal!"))
           (println "Goodbye!")))))
