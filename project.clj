@@ -3,7 +3,8 @@
   :description "OptionParser for Clojure and ClojureScript: Functional GNU-style command line options parser."
   :license {:name "MIT License"
             :url "http://www.opensource.org/licenses/mit-license.php"}
-  :dependencies [[org.clojure/clojure "1.5.1"]]
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/clojurescript "0.0-1896"]]
   :source-paths ["target/classes"]
   :profiles {:dev {:source-paths ["src-example"]
                    :aliases {"example" ["trampoline" "run" "-m" "example"]
