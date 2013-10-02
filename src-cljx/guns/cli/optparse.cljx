@@ -10,7 +10,17 @@
 
    See src-example/example.clj for example program with global options,
    subcommands, and subcommand options handling."
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            #+cljs [goog.string]
+            #+cljs [goog.string.format]))
+
+
+;; `format` is currently no longer available in CLJS.
+#+cljs
+(defn format
+  "Format a string using goog.string.format."
+  [fmt & strs]
+  (apply goog.string/format fmt strs))
 
 (defn tokenize-arguments
   "Reduce arguments sequence into a tuple of [opt-type opt optarg] vectors and
