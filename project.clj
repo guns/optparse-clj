@@ -7,7 +7,8 @@
                  [org.clojure/clojurescript "0.0-1896"]]
   :profiles {:dev {:source-paths ["src-example"]
                    :aliases {"example" ["trampoline" "run" "-m" "example"]
-                             "cljs" ["do" "cljx" "once," "cljsbuild" "once"]}
+                             "cljs" ["do" "cljx" "once," "cljsbuild" "once"]
+                             "build" ["do" "cljx" "once," "jar"]}
                    :plugins [[com.keminglabs/cljx "0.3.0"]
                              [lein-cljsbuild "0.3.2"]]
                    :cljx {:builds [{:source-paths ["src-cljx"]
