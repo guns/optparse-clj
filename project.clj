@@ -5,7 +5,6 @@
             :url "http://www.opensource.org/licenses/mit-license.php"}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-1896"]]
-  :source-paths ["target/classes"]
   :profiles {:dev {:source-paths ["src-example"]
                    :aliases {"example" ["trampoline" "run" "-m" "example"]
                              "cljs" ["do" "cljx" "once," "cljsbuild" "once"]}
@@ -18,12 +17,12 @@
                                     :output-path "target/classes"
                                     :rules :cljs}]}
                    ;; JS builds for local testing only
-                   :cljsbuild {:builds [{:source-paths ["target/classes" "src-example"]
+                   :cljsbuild {:builds [{:source-paths ["src-example"]
                                          :compiler {:output-to "target/example-dev.js"
                                                     :optimizations :simple
                                                     :pretty-print true
                                                     :target :nodejs}}
-                                        {:source-paths ["target/classes" "src-example"]
+                                        {:source-paths ["src-example"]
                                          :compiler {:output-to "target/example.js"
                                                     :optimizations :advanced
                                                     :pretty-print false
