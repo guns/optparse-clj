@@ -9,6 +9,19 @@
       |_|       |_|                                 |__/
 ```
 
+## Merged into [tools.cli][]!
+
+optparse-clj has been merged into [tools.cli][]! There have been a few
+enhancements and changes since v1.1.2, but [clojure.tools.cli/parse-opts][] is
+the conceptual successor to guns.cli.optparse/parse.
+
+Thanks to everyone for your support!
+
+[tools.cli]: https://github.com/clojure/tools.cli
+[clojure.tools.cli/parse-opts]: https://github.com/clojure/tools.cli/blob/master/src/main/clojure/clojure/tools/cli.clj#L387-L501
+
+## Introduction
+
 OptionParser for Clojure and ClojureScript. Works like [clojure.tools.cli][],
 but supports GNU option parsing conventions:
 
